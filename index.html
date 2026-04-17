@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Export Operation 자동화 구조도</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f5f5f3;color:#222;}
+.page{max-width:1000px;margin:0 auto;padding:36px 24px 64px;}
+h1{font-size:22px;font-weight:500;color:#111;margin-bottom:4px;}
+.subtitle{font-size:13px;color:#888;margin-bottom:28px;}
+
+.lane-header{display:grid;grid-template-columns:140px 1fr 130px 130px;gap:6px;margin-bottom:0;}
+.lane-label{text-align:center;padding:9px 0;border-radius:8px;font-size:12px;font-weight:500;}
+.ll-sales{background:#D3D1C7;color:#2C2C2A;}
+.ll-me{background:#CECBF6;color:#26215C;}
+.ll-finance{background:#9FE1CB;color:#085041;}
+.ll-logistics{background:#9FE1CB;color:#085041;}
+
+.card{border-radius:10px;padding:13px 15px;}
+.card-num{font-size:9px;font-weight:500;letter-spacing:.08em;margin-bottom:3px;}
+.card-title{font-size:13px;font-weight:500;margin-bottom:6px;line-height:1.4;}
+.card-tool{font-size:11px;margin-bottom:8px;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;}
+.tag{font-size:10px;padding:2px 9px;border-radius:99px;font-weight:500;}
+
+.card-purple{background:#EEEDFE;border:1px solid #AFA9EC;}
+.card-purple .card-num{color:#534AB7;}
+.card-purple .card-title{color:#26215C;}
+.card-purple .card-tool{color:#7F77DD;}
+.card-purple .tag{background:#CECBF6;color:#26215C;}
+
+.card-green{background:#EAF3DE;border:1px solid #97C459;}
+.card-green .card-num{color:#3B6D11;}
+.card-green .card-title{color:#27500A;}
+.card-green .card-tool{color:#639922;}
+.card-green .tag{background:#C0DD97;color:#27500A;}
+
+.card-amber{background:#FAEEDA;border:1px solid #EF9F27;}
+.card-amber .card-num{color:#854F0B;}
+.card-amber .card-title{color:#412402;}
+.card-amber .card-tool{color:#BA7517;}
+.card-amber .tag{background:#FAC775;color:#412402;}
+
+.card-coral{background:#FAECE7;border:1px solid #F0997B;}
+.card-coral .card-num{color:#993C1D;}
+.card-coral .card-title{color:#4A1B0C;}
+.card-coral .card-tool{color:#D85A30;}
+.card-coral .tag{background:#F5C4B3;color:#4A1B0C;}
+
+.card-teal{background:#E1F5EE;border:1px solid #5DCAA5;}
+.card-teal .card-num{color:#0F6E56;}
+.card-teal .card-title{color:#04342C;}
+.card-teal .card-tool{color:#1D9E75;}
+.card-teal .tag{background:#9FE1CB;color:#04342C;}
+
+.card-gray{background:#F1EFE8;border:1px solid #D3D1C7;}
+.card-gray .card-num{color:#5F5E5A;}
+.card-gray .card-title{color:#2C2C2A;}
+.card-gray .card-tool{color:#888780;}
+.card-gray .tag{background:#D3D1C7;color:#2C2C2A;}
+
+/* 사이드 카드 (재무팀·물류팀) */
+.card-side{background:#E1F5EE;border:1px solid #5DCAA5;border-radius:10px;padding:11px 12px;}
+.card-side .side-label{font-size:9px;font-weight:500;color:#0F6E56;letter-spacing:.07em;margin-bottom:4px;}
+.card-side .side-title{font-size:12px;font-weight:500;color:#04342C;margin-bottom:6px;line-height:1.4;}
+.card-side .tag{background:#9FE1CB;color:#04342C;font-size:9px;}
+
+/* 슬랙 채널 강조 태그 */
+.tag-slack{background:#4A154B;color:#fff;font-size:10px;padding:2px 9px;border-radius:99px;font-weight:500;}
+
+.master-band{background:#EEEDFE;border:1.5px solid #7F77DD;border-radius:10px;padding:14px 18px;}
+.master-label{font-size:9px;font-weight:500;color:#534AB7;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;}
+.master-title{font-size:13px;font-weight:500;color:#26215C;margin-bottom:9px;}
+.master-flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.mf-chip{background:#CECBF6;color:#26215C;font-size:10px;font-weight:500;padding:3px 11px;border-radius:99px;}
+.mf-sep{color:#7F77DD;font-size:12px;}
+
+.input-section{background:#F8FAF8;border:1px solid #C0DDB8;border-radius:12px;padding:16px 20px;}
+.input-label{font-size:10px;font-weight:500;color:#3B6D11;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+.channel-row{display:flex;flex-wrap:wrap;gap:7px;}
+.channel-pill{background:#fff;border:1px solid #97C459;border-radius:99px;padding:4px 13px;font-size:11px;color:#3B6D11;font-weight:500;}
+
+.section-divider{display:flex;align-items:center;gap:10px;margin:18px 0 14px;}
+.div-line{flex:1;height:1px;border-top:1.5px dashed #CCC;}
+.div-badge{font-size:10px;font-weight:500;padding:3px 13px;border-radius:99px;white-space:nowrap;}
+
+.arr-v{display:flex;flex-direction:column;align-items:center;padding:5px 0;}
+.arr-line{width:1.5px;height:20px;background:#BBBBBB;}
+.arr-head{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #BBBBBB;}
+.arr-lbl{font-size:10px;color:#AAA;margin:2px 0;}
+.arr-h-line{height:1.5px;background:#BBBBBB;width:18px;}
+.arr-h-head{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #BBBBBB;}
+
+.body-wrap{border:1px solid #E0DED4;border-top:none;border-radius:0 0 12px 12px;background:#FAFAF8;padding:14px 10px;display:flex;flex-direction:column;gap:0;}
+.grid4{display:grid;grid-template-columns:140px 1fr 130px 130px;gap:8px;align-items:start;}
+.grid4-center{display:grid;grid-template-columns:140px 1fr 130px 130px;gap:8px;align-items:center;}
+
+@media(prefers-color-scheme:dark){
+  body{background:#1a1a18;}
+  h1{color:#e0dfd8;} .subtitle{color:#888780;}
+  .body-wrap{background:#1e1e1c;border-color:#3a3a36;}
+  .card-purple{background:#26215C;border-color:#534AB7;}
+  .card-purple .card-title{color:#CECBF6;} .card-purple .card-tool{color:#AFA9EC;} .card-purple .tag{background:#3C3489;color:#CECBF6;}
+  .card-green{background:#173404;border-color:#3B6D11;}
+  .card-green .card-title{color:#C0DD97;} .card-green .card-tool{color:#97C459;} .card-green .tag{background:#27500A;color:#C0DD97;}
+  .card-amber{background:#412402;border-color:#BA7517;}
+  .card-amber .card-title{color:#FAC775;} .card-amber .card-tool{color:#EF9F27;} .card-amber .tag{background:#633806;color:#FAC775;}
+  .card-coral{background:#4A1B0C;border-color:#D85A30;}
+  .card-coral .card-title{color:#F5C4B3;} .card-coral .card-tool{color:#F0997B;} .card-coral .tag{background:#712B13;color:#F5C4B3;}
+  .card-teal{background:#04342C;border-color:#1D9E75;}
+  .card-teal .card-title{color:#9FE1CB;} .card-teal .card-tool{color:#5DCAA5;} .card-teal .tag{background:#085041;color:#9FE1CB;}
+  .card-gray{background:#2C2C2A;border-color:#444441;}
+  .card-gray .card-title{color:#D3D1C7;} .card-gray .card-tool{color:#888780;} .card-gray .tag{background:#444441;color:#D3D1C7;}
+  .card-side{background:#04342C;border-color:#1D9E75;}
+  .card-side .side-label{color:#5DCAA5;} .card-side .side-title{color:#9FE1CB;} .card-side .tag{background:#085041;color:#9FE1CB;}
+  .master-band{background:#1e1a3a;border-color:#534AB7;}
+  .master-title{color:#CECBF6;} .mf-chip{background:#3C3489;color:#CECBF6;}
+  .input-section{background:#1a2a1a;border-color:#3B6D11;}
+  .channel-pill{background:#1e2e1e;border-color:#639922;color:#97C459;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Export Operation 자동화 구조도</h1>
+  <p class="subtitle">SR Biotek · 운영지원팀 Export Operation 업무 자동화 흐름</p>
+
+  <!-- 레인 헤더 -->
+  <div class="lane-header">
+    <div class="lane-label ll-sales">영업팀</div>
+    <div class="lane-label ll-me">나 (운영지원)</div>
+    <div class="lane-label ll-finance">재무팀</div>
+    <div class="lane-label ll-logistics">물류팀</div>
+  </div>
+
+  <div class="body-wrap">
+
+    <!-- 입력 트리거 -->
+    <div style="margin-bottom:8px;">
+      <div class="input-section">
+        <div class="input-label">입력 · 트리거</div>
+        <div style="font-size:12px;color:#3B6D11;margin-bottom:8px;">영업팀이 슬랙 채널에 출고 요청 등록 — PI 파일 및 바이어 정보 첨부</div>
+        <div class="channel-row">
+          <span class="channel-pill" style="background:#4A154B;border-color:#4A154B;color:#fff;">Slack · 03_이데넬_운영지원</span>
+          <span class="channel-pill" style="background:#4A154B;border-color:#4A154B;color:#fff;">출고요청 탭</span>
+          <span class="channel-pill">PI 파일 첨부</span>
+          <span class="channel-pill">바이어 이메일</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr-v"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+    <!-- 마스터 DB -->
+    <div style="margin-bottom:8px;">
+      <div class="master-band">
+        <div class="master-label">기반 데이터 — 마스터 DB</div>
+        <div class="master-title">ERP code 입력 → 제품·가격·업체 정보 자동 연결</div>
+        <div class="master-flow">
+          <span class="mf-chip">ERP code</span>
+          <span class="mf-sep">→</span>
+          <span class="mf-chip">제품명</span>
+          <span class="mf-sep">+</span>
+          <span class="mf-chip">Tier A · B · C 단가</span>
+          <span class="mf-sep">+</span>
+          <span class="mf-chip">HS code</span>
+          <span class="mf-sep">+</span>
+          <span class="mf-chip">거래처 정보</span>
+          <span class="mf-sep">→</span>
+          <span class="mf-chip">CI 자동 완성</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr-v"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+    <!-- ROW 1: PO→PI + CI 작성 -->
+    <div class="grid4-center" style="margin-bottom:4px;">
+      <div>
+        <div class="card card-gray">
+          <div class="card-num">1 — 영업팀</div>
+          <div class="card-title">PO → PI 작성</div>
+          <div class="tags">
+            <span class="tag">Tier별 가격표 참고</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+          <div class="arr-h-line"></div><div class="arr-h-head"></div>
+        </div>
+        <div style="flex:1;">
+          <div class="card card-purple">
+            <div class="card-num">STEP 1 — CI 작성</div>
+            <div class="card-title">PI → CI 자동 변환 · 크로스체크</div>
+            <div class="card-tool" style="color:#7F77DD;">Google Sheets / Excel 매크로 · 수식</div>
+            <div class="tags">
+              <span class="tag">PI → CI 자동 매핑</span>
+              <span class="tag">Discount · Credit 자동 반영</span>
+              <span class="tag">금액 오류 자동 감지</span>
+              <span class="tag">PDF 자동 저장</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div></div><div></div>
+    </div>
+
+    <div class="arr-v"><div class="arr-line"></div><div class="arr-head"></div></div>
+
+    <!-- ROW 2: ERP 입력 -->
+    <div class="grid4" style="margin-bottom:4px;">
+      <div></div>
+      <div>
+        <div class="card card-green">
+          <div class="card-num">STEP 2 — ERP 입력</div>
+          <div class="card-title">ECount 판매입력 · 출하지시서 자동 생성</div>
+          <div class="card-tool" style="color:#639922;">ECount ERP · Google Sheets 연동</div>
+          <div class="tags">
+            <span class="tag">CI → ERP 자동 업로드</span>
+            <span class="tag">CI ↔ ERP 불일치 즉시 알림</span>
+            <span class="tag">출하지시서 자동 생성</span>
+          </div>
+        </div>
+      </div>
+      <div></div><div></div>
+    </div>
+
+    <div class="arr-v"><div class="arr-lbl">바이어 Payment Slip 수신 대기</div><div class="arr-line"></div><div class="arr-head"></div></div>
+
+    <!-- ROW 3: 입금통보 + 재무확인요청 + 재무팀 + 물류팀 -->
+    <div class="grid4-center" style="margin-bottom:4px;">
+      <div>
+        <div class="card card-gray">
+          <div class="card-num">— 바이어</div>
+          <div class="card-title">Payment Slip 이메일 발송</div>
+          <div class="tags">
+            <span class="tag">메일 첨부</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+          <div class="arr-h-line"></div><div class="arr-h-head"></div>
+        </div>
+        <div style="flex:1;">
+          <div class="card card-amber">
+            <div class="card-num">STEP 3 — 입금 확인 · 출고 요청</div>
+            <div class="card-title">Payment Slip 수신 → 재무팀 슬랙 확인 → 물류팀 출고 요청</div>
+            <div class="card-tool" style="color:#BA7517;">Slack · Gmail · Google Drive</div>
+            <div class="tags">
+              <span class="tag-slack">Slack · 03_재무_이데넬</span>
+              <span class="tag">CI + Payment Slip 첨부</span>
+              <span class="tag">송금 확인 완료 후</span>
+              <span class="tag-slack">Slack · 04_13_이데넬해외-출고요청</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card-side">
+          <div class="side-label">재무팀 확인</div>
+          <div class="side-title">슬랙 확인 후 송금 승인</div>
+          <div class="tags">
+            <span class="tag">03_재무_이데넬</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card-side">
+          <div class="side-label">물류팀 출고 요청</div>
+          <div class="side-title">패킹 완료 후 PL 공유</div>
+          <div class="tags">
+            <span class="tag">04_13_이데넬해외</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr-v"><div class="arr-lbl">PL 수신</div><div class="arr-line"></div><div class="arr-head"></div></div>
+
+    <!-- ROW 4: 면장·원산지·포워더 -->
+    <div class="grid4" style="margin-bottom:4px;">
+      <div></div>
+      <div>
+        <div class="card card-purple">
+          <div class="card-num">STEP 4 — 면장 · 원산지 · 포워더</div>
+          <div class="card-title">CI ↔ PL 대조 · 면장 발행 · 포워더 확정</div>
+          <div class="card-tool" style="color:#7F77DD;">Unipass · Google Sheets · 이메일</div>
+          <div class="tags">
+            <span class="tag">CI ↔ PL 자동 대조</span>
+            <span class="tag">포워더 견적 템플릿 자동 생성</span>
+            <span class="tag">원산지증명서 발행</span>
+            <span class="tag">출고 완료 슬랙 자동 알림</span>
+          </div>
+        </div>
+      </div>
+      <div></div><div></div>
+    </div>
+
+    <div class="arr-v"><div class="arr-lbl">선적 완료</div><div class="arr-line"></div><div class="arr-head"></div></div>
+
+    <!-- 주마감 -->
+    <div class="section-divider">
+      <div class="div-line"></div>
+      <div class="div-badge" style="background:#FFF5E0;border:1px solid #EF9F27;color:#854F0B;">주마감 — 매주 금요일</div>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="grid4" style="margin-bottom:4px;">
+      <div></div>
+      <div>
+        <div class="card card-amber">
+          <div class="card-num">STEP 5 — 주마감</div>
+          <div class="card-title">ERP 출고 예정 자동 점검 · 환율 반영</div>
+          <div class="card-tool" style="color:#BA7517;">ECount ERP · 환율 API · Slack</div>
+          <div class="tags">
+            <span class="tag">미출고 날짜 자동 이월</span>
+            <span class="tag">선적일 환율 API 자동 반영</span>
+            <span class="tag">팀장 슬랙 자동 보고</span>
+          </div>
+        </div>
+      </div>
+      <div></div><div></div>
+    </div>
+
+    <!-- 월마감 -->
+    <div class="section-divider">
+      <div class="div-line"></div>
+      <div class="div-badge" style="background:#FAECE7;border:1px solid #D85A30;color:#712B13;">월마감 — 매월</div>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="grid4" style="margin-bottom:4px;">
+      <div></div>
+      <div>
+        <div class="card card-coral">
+          <div class="card-num">STEP 6 — 월마감</div>
+          <div class="card-title">Unipass 면장 수집 → 3자 대조 → 재무팀 자동 발송</div>
+          <div class="card-tool" style="color:#D85A30;">Unipass · Apps Script · Gmail</div>
+          <div class="tags">
+            <span class="tag">면장 파일명 자동 규격화</span>
+            <span class="tag">ERP · CI · 면장 3자 자동 대조</span>
+            <span class="tag">불일치 하이라이트</span>
+            <span class="tag">재무팀 메일 자동 생성</span>
+          </div>
+        </div>
+      </div>
+      <div></div><div></div>
+    </div>
+
+    <div class="arr-v"><div class="arr-lbl">월마감 완료</div><div class="arr-line"></div><div class="arr-head"></div></div>
+
+    <!-- OUTPUT -->
+    <div class="grid4">
+      <div></div>
+      <div>
+        <div class="card card-teal">
+          <div class="card-num">OUTPUT — 산출물</div>
+          <div class="card-title">재무팀 전달 완료 · 대시보드 업데이트</div>
+          <div class="card-tool" style="color:#1D9E75;">Google Drive · Gmail · ECount</div>
+          <div class="tags">
+            <span class="tag">3자 검증 완료 데이터 전달</span>
+            <span class="tag">업체별 출고 현황 대시보드</span>
+            <span class="tag">월별 데이터 아카이브</span>
+          </div>
+        </div>
+      </div>
+      <div></div><div></div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
